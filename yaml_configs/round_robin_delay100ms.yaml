@@ -1,0 +1,9 @@
+concurrency: 6
+experiment_name: round_robin_delay100ms
+fault_duration_sec: 60
+fault_injection_delay: 100ms
+nginx_policy: round_robin
+recovery_duration_sec: 30
+total_duration_sec: 120
+trials: 30
+warmup_duration_sec: 30

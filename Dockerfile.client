@@ -1,0 +1,13 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install PyYAML to read experiment configs
+RUN pip install PyYAML
+
+COPY client.py .
+
+ENTRYPOINT ["python3", "client.py"]
+
+# Default command arguments (can be overridden when running the container)
+CMD ["--port", "50051", "--concurrency", "10.0", "--time", "150"]

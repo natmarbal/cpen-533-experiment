@@ -1,0 +1,57 @@
+services:
+  server_w1:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    cap_add:
+      - NET_ADMIN
+    networks:
+      default:
+        aliases:
+          - server
+
+  server_w2:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    cap_add:
+      - NET_ADMIN
+    networks:
+      default:
+        aliases:
+          - server
+
+  server_w3:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    cap_add:
+      - NET_ADMIN
+    networks:
+      default:
+        aliases:
+          - server
+    # Do not expose ports here. NGINX will handle all incoming traffic.
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./${NGINX_CONF:-nginx_configs/round_robin.conf}:/etc/nginx/nginx.conf:ro,z
+    ports:
+      - "50051:50051"
+    depends_on:
+      - server_w1
+      - server_w2
+      - server_w3
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    volumes:
+      - .:/app:z
+    network_mode: "service:nginx"
+    depends_on:
+      - nginx
+    # Pass the config file, trial number, and port (NGINX is on 50051)
+    command: [ "--port", "50051", "--config", "${CONFIG_FILE:-}", "--trial", "${TRIAL_NUM:-1}" ]

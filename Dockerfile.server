@@ -1,0 +1,16 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install iproute2 for fault injection (tc)
+RUN apt-get update && apt-get install -y iproute2 && rm -rf /var/lib/apt/lists/*
+
+COPY server.py .
+
+# Expose the default port
+EXPOSE 50051
+
+ENTRYPOINT ["python3", "server.py"]
+
+# Bind to 0.0.0.0 so it can accept traffic from NGINX
+CMD ["--addr", "0.0.0.0:50051"]
